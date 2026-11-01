@@ -874,10 +874,10 @@ struct CaptureSettingsTab: View {
     @AppStorage("bs_overlayPinnedDisplayID") private var overlayPinnedDisplayIDRaw: Int = 0
     @AppStorage("bs_openEditorAfterCapture") private var openEditorAfterCapture = false
     @AppStorage("bs_keepInDeckUntilSaved") private var keepInDeckUntilSaved = false
-    @AppStorage("bs_captureRegionOnRelease") private var captureRegionOnRelease = false
+    @AppStorage("bs_captureRegionOnRelease") private var captureRegionOnRelease = true
     @AppStorage("bs_freezeScreenDuringRegionCapture") private var freezeScreenDuringRegionCapture = false
     @AppStorage(AppPreferences.nativeRegionSelectorKey) private var nativeRegionSelector = false
-    @AppStorage(AppPreferences.preselectPreviousRegionKey) private var preselectPreviousRegion = true
+    @AppStorage(AppPreferences.preselectPreviousRegionKey) private var preselectPreviousRegion = false
     @State private var isConfirmingReset = false
 
     private var selfTimerDelay: Binding<SelfTimerDelay> {
@@ -1004,10 +1004,10 @@ struct CaptureSettingsTab: View {
                 overlayPinnedDisplayIDRaw = 0
                 openEditorAfterCapture = false
                 keepInDeckUntilSaved = false
-                captureRegionOnRelease = false
+                captureRegionOnRelease = true
                 freezeScreenDuringRegionCapture = false
                 nativeRegionSelector = false
-                preselectPreviousRegion = true
+                preselectPreviousRegion = false
             }
             Button("Cancel", role: .cancel) {}
         }

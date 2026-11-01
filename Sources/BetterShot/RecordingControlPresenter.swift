@@ -42,63 +42,86 @@ struct RecordingSessionControls: View {
         manager.state == .starting || manager.state == .finishing
     }
 
-    var body: some View {
-        HStack(spacing: 0) {
-            Button { manager.stopRecording() } label: {
-                HStack(spacing: 8) {
-                    if isSettling {
-                        ProgressView().controlSize(.mini).frame(width: 18)
-                    } else {
-                        Image(systemName: "stop.fill").font(.system(size: 12, weight: .semibold))
-                    }
-                    Text(manager.state == .finishing ? "Saving" : manager.state == .starting ? "Preparing" : "Stop")
-                        .font(.system(size: 12, weight: .semibold))
-                    Text(manager.formattedElapsedTime)
-                        .font(.system(size: 13, weight: .medium).monospacedDigit())
-                        .frame(minWidth: 42, alignment: .leading)
-                    if isPaused { Text("Paused").font(.caption).foregroundStyle(BarMetrics.activeTint) }
-                }
-                .foregroundStyle(BarMetrics.recordTint)
-                .padding(.horizontal, 10)
-                .frame(height: BarMetrics.recordingHeight)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(BarButtonStyle())
-            .disabled(isSettling)
-            .help("Stop and save the recording")
-            .accessibilityLabel("Stop and save recording, \(manager.formattedElapsedTime) elapsed")
-
-            separator
-            BarActionButton(
-                id: .pauseResume,
-                title: isPaused ? "Resume recording" : "Pause recording",
-                systemImage: isPaused ? "play.circle" : "pause.circle"
-            ) {
-                if isPaused { manager.resumeRecording() }
-                else { manager.pauseRecording() }
-            }
-            .frame(width: 42)
-            .disabled(isSettling)
-
-            separator
-            BarActionButton(id: .restart, title: "Start over", systemImage: "arrow.counterclockwise") {
-                presenter.confirmRecordingAction(.restartRecording)
-            }
-            .frame(width: 42)
-            .disabled(isSettling)
-
-            separator
-            BarActionButton(id: .discard, title: "Discard recording", systemImage: "trash") {
-                presenter.confirmRecordingAction(.discardRecording)
-            }
-            .frame(width: 42)
-            .disabled(isSettling)
+    private var settlingTitle: String? {
+        switch manager.state {
+        case .starting: "Preparing"
+        case .finishing: "Saving"
+        default: nil
         }
     }
 
-    private var separator: some View {
-        Rectangle()
-            .fill(BarMetrics.edge)
-            .frame(width: 1, height: BarMetrics.recordingHeight)
+    var body: some View {
+        HStack(spacing: 0) {
+            status
+                .padding(.leading, 14)
+                .padding(.trailing, 10)
+
+            Rectangle()
+                .fill(BarMetrics.stroke)
+                .frame(width: 1, height: 18)
+
+            HStack(spacing: 2) {
+                if manager.isMicrophoneActive {
+                    BarActionButton(
+                        id: .microphoneMute,
+                        title: manager.isMicrophoneMuted ? "Unmute microphone" : "Mute microphone",
+                        systemImage: manager.isMicrophoneMuted ? "mic.slash.fill" : "mic.fill",
+                        tint: manager.isMicrophoneMuted ? BarMetrics.recordTint : BarMetrics.activeTint,
+                        isCompact: true
+                    ) {
+                        manager.toggleMicrophoneMute()
+                    }
+                }
+
+                BarActionButton(
+                    id: .pauseResume,
+                    title: isPaused ? "Resume recording" : "Pause recording",
+                    systemImage: isPaused ? "play.fill" : "pause.fill",
+                    isCompact: true
+                ) {
+                    if isPaused { manager.resumeRecording() }
+                    else { manager.pauseRecording() }
+                }
+
+                BarActionButton(
+                    id: .stop,
+                    title: "Stop and save",
+                    systemImage: "stop.fill",
+                    tint: BarMetrics.recordTint,
+                    isCompact: true,
+                    accessibility: "Stop and save recording, \(manager.formattedElapsedTime) elapsed"
+                ) {
+                    manager.stopRecording()
+                }
+
+                BarActionButton(id: .restart, title: "Start over", systemImage: "arrow.counterclockwise", isCompact: true) {
+                    presenter.confirmRecordingAction(.restartRecording)
+                }
+
+                BarActionButton(id: .discard, title: "Discard recording", systemImage: "xmark", isCompact: true) {
+                    presenter.confirmRecordingAction(.discardRecording)
+                }
+            }
+            .disabled(isSettling)
+            .padding(.leading, 6)
+            .padding(.trailing, 4)
+        }
+    }
+
+    private var status: some View {
+        HStack(spacing: 8) {
+            if isSettling {
+                ProgressView().controlSize(.mini)
+            } else {
+                Circle()
+                    .fill(isPaused ? Color(nsColor: .systemOrange) : BarMetrics.recordTint)
+                    .frame(width: 8, height: 8)
+            }
+            Text(settlingTitle ?? manager.formattedElapsedTime)
+                .font(.system(size: 13, weight: .medium, design: .monospaced))
+                .foregroundStyle(BarMetrics.activeTint)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(settlingTitle ?? "\(isPaused ? "Paused" : "Recording"), \(manager.formattedElapsedTime) elapsed")
     }
 }

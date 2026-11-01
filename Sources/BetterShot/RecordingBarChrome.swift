@@ -17,7 +17,13 @@ enum BarMetrics {
     static let controlSize: CGFloat = 36
     static let height: CGFloat = 64
     static let recordingHeight: CGFloat = 38
+    /// Icon-only controls in the in-session row.
+    static let compactControlSize: CGFloat = 30
     static let cornerRadius: CGFloat = 16
+    static var recordingCornerRadius: CGFloat { recordingHeight / 2 }
+    /// The in-session bar stays dark in either appearance, so the controls
+    /// read the same over whatever is being recorded.
+    static let recordingFill = Color(white: 0.1)
     static let itemSpacing: CGFloat = 2
     static let horizontalPadding: CGFloat = 6
 
@@ -107,6 +113,7 @@ enum BarTooltipID: String {
     case timer
     case close
 
+    case microphoneMute
     case pauseResume
     case restart
     case stop
@@ -212,6 +219,7 @@ struct BarActionLabel: View {
     let systemImage: String
     var tint: Color = BarMetrics.activeTint
     var caption: String? = nil
+    var isCompact = false
 
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
@@ -219,10 +227,21 @@ struct BarActionLabel: View {
     @State private var isHovering = false
     @State private var frame: CGRect = .zero
 
+    private var iconSize: CGFloat {
+        if isCompact { return 12 }
+        return caption == nil ? 17 : (controlSize == .mini ? 18 : 22)
+    }
+
+    private var targetSize: CGSize {
+        if isCompact { return CGSize(width: BarMetrics.compactControlSize, height: BarMetrics.compactControlSize) }
+        return CGSize(width: caption == nil ? BarMetrics.controlSize : (controlSize == .mini ? 60 : 72),
+                      height: caption == nil ? BarMetrics.controlSize : (controlSize == .mini ? 46 : 52))
+    }
+
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: systemImage)
-                .font(.system(size: caption == nil ? 17 : (controlSize == .mini ? 18 : 22), weight: .regular))
+                .font(.system(size: iconSize, weight: isCompact ? .medium : .regular))
             if let caption {
                 Text(caption)
                     .font(.system(size: 11))
@@ -230,14 +249,13 @@ struct BarActionLabel: View {
             }
         }
             .foregroundStyle(tint.opacity(isEnabled ? 1 : 0.3))
-            .frame(width: caption == nil ? BarMetrics.controlSize : (controlSize == .mini ? 60 : 72),
-                   height: caption == nil ? BarMetrics.controlSize : (controlSize == .mini ? 46 : 52))
+            .frame(width: targetSize.width, height: targetSize.height)
             .background {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: isCompact ? BarMetrics.compactControlSize / 2 : 10)
                     .fill(BarMetrics.hoverFill)
                     .opacity(isHovering ? 1 : 0)
             }
-            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: isCompact ? BarMetrics.compactControlSize / 2 : 8, style: .continuous))
             // One of two cursor paths, for the two states the bar lives in.
             // While BetterShot is the active app the system's pointer-style
             // engine owns the cursor and enforces the declared style against
@@ -299,6 +317,7 @@ struct BarActionButton: View {
     let systemImage: String
     var tint: Color = BarMetrics.activeTint
     var caption: String? = nil
+    var isCompact = false
     /// Only worth setting where the tooltip leaves something out - the device
     /// a control is bound to, what a destructive action destroys.
     var accessibility: String?
@@ -311,7 +330,7 @@ struct BarActionButton: View {
             tooltip?.dismiss()
             action()
         } label: {
-            BarActionLabel(id: id, title: title, systemImage: systemImage, tint: tint, caption: caption)
+            BarActionLabel(id: id, title: title, systemImage: systemImage, tint: tint, caption: caption, isCompact: isCompact)
         }
         .buttonStyle(BarButtonStyle())
         .accessibilityLabel(accessibility ?? title)

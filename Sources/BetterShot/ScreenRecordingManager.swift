@@ -119,9 +119,13 @@ final class ScreenRecordingManager {
     var elapsedTime: TimeInterval = 0
     var errorMessage: String?
     var onFinishRecording: ((RecordingSession, CGDirectDisplayID?) -> Void)?
+    /// Whether this recording has a microphone track to mute.
+    private(set) var isMicrophoneActive = false
+    private(set) var isMicrophoneMuted = false
 
     private let capture = ScreenRecordingCapture()
     private let writer = ScreenRecordingWriter()
+    private let microphoneGate = RecordingMicrophoneGate()
     private let pointerActivityRecorder = PointerActivityRecorder()
     private let keystrokeRecorder = RecordingKeystrokeRecorder()
     private var displayID: CGDirectDisplayID?
@@ -178,6 +182,11 @@ final class ScreenRecordingManager {
                     Self.presentInputWarnings(inputWarnings)
                 }
 
+                isMicrophoneActive = options.microphoneDeviceID != nil
+                if !isMicrophoneActive {
+                    setMicrophoneMuted(false)
+                }
+
                 // The teleprompter session starts before the capture wires
                 // its callbacks so the microphone tee below can capture the
                 // engine once, without a main-actor hop per audio buffer.
@@ -209,8 +218,11 @@ final class ScreenRecordingManager {
                     writer.writeVideoSample(sampleBuffer)
                 }
                 let teleprompterEngine = TeleprompterController.shared.activeEngine
-                capture.onAudioSample = { [writer] sampleBuffer, kind in
+                capture.onAudioSample = { [writer, microphoneGate] sampleBuffer, kind in
                     if kind == .microphone {
+                        // Before the teleprompter too: muted speech shouldn't
+                        // scroll the script.
+                        guard microphoneGate.admit(sampleBuffer) else { return }
                         teleprompterEngine?.ingest(sampleBuffer)
                     }
                     writer.writeAudioSample(sampleBuffer, kind: kind)
@@ -321,6 +333,16 @@ final class ScreenRecordingManager {
         TeleprompterController.shared.setPaused(false)
         state = .recording
         updateElapsedTime()
+    }
+
+    func toggleMicrophoneMute() {
+        guard isMicrophoneActive, state == .recording || state == .paused else { return }
+        setMicrophoneMuted(!isMicrophoneMuted)
+    }
+
+    private func setMicrophoneMuted(_ muted: Bool) {
+        isMicrophoneMuted = muted
+        microphoneGate.isMuted = muted
     }
 
     func restartRecording() {
@@ -594,7 +616,7 @@ final class ScreenRecordingManager {
     /// missing grant otherwise fails with a silent -3801. Trigger the system
     /// prompt on first use and route the user to System Settings after that
     /// (macOS only shows the prompt once per app).
-    private static func ensureScreenCapturePermission() -> Bool {
+    static func ensureScreenCapturePermission() -> Bool {
         if CGPreflightScreenCaptureAccess() {
             return true
         }
@@ -691,6 +713,11 @@ final class ScreenRecordingManager {
         startedAt = nil
         pausedAt = nil
         accumulatedPauseDuration = 0
+        isMicrophoneActive = false
+        // Start Over keeps a muted mic muted rather than going live unasked.
+        if finishAction != .restart {
+            setMicrophoneMuted(false)
+        }
         finishAction = .preview
         isStopping = false
         state = .idle

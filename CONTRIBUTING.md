@@ -167,12 +167,12 @@ through unchanged; line events get reversed or smoothed. It pauses on app
 changes and stops at page end, after repeated misses, or at the size limit. Run
 `BETTERSHOT_CHECK_CAPTURE_UI=1 bash Tests/run-exports.sh` after a test build to
 check stitching and the compact capture controls in both appearances.
-Region screenshots use `RegionSelectionOverlay` with the previous area
-(`AppPreferences.lastRegionRect`) preselected, so Return captures it again, then
-reactivate the previously frontmost app before `screencapture -R` takes the shot.
+Region screenshots use `RegionSelectionOverlay`, which by default opens empty
+and captures on mouse release, then reactivate the previously frontmost app before `screencapture -R` takes the shot.
 `AppPreferences.preselectPreviousRegion`, exposed as Start with the last area
-selected in Settings > Capture > Region, defaults on. Turning it off opens every
-use of the selector empty, including scrolling and recording areas, and still
+selected in Settings > Capture > Region, defaults off. Turning it on preselects
+`AppPreferences.lastRegionRect` in every use of the selector, including scrolling
+and recording areas, and still
 stores the chosen area for Capture Previous Region.
 `ScreenCapturePermission.isReadyToCapture` runs before every screenshot except
 the color picker, and before recording sources load. Once BetterShot has seen
@@ -189,7 +189,7 @@ capture. It does not update the remembered rectangle; Capture Previous Region ke
 the last area chosen with BetterShot's selector. Scrolling and recording area
 selection still use BetterShot's selector because they need the rectangle.
 `AppPreferences.captureRegionOnRelease`, exposed as Capture as soon as I let go
-in Settings > Capture > Region, chooses immediate capture on release or adjustment
+in Settings > Capture > Region (on by default), chooses immediate capture on release or adjustment
 before confirmation in BetterShot's selector, which preserves the remembered
 rectangle on both paths. Native selection always captures on release, so the
 control is disabled there.

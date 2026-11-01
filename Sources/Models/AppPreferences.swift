@@ -262,10 +262,9 @@ enum AppPreferences {
     }
 
     /// Takes the shot the moment the mouse comes up, skipping the adjustable
-    /// rectangle. The pre-0.4.3 flow, kept for people who draw the region in one
-    /// stroke and never nudge it.
+    /// rectangle. On by default in this fork.
     static var captureRegionOnRelease: Bool {
-        get { UserDefaults.standard.bool(forKey: captureRegionOnReleaseKey) }
+        get { UserDefaults.standard.object(forKey: captureRegionOnReleaseKey) as? Bool ?? true }
         set { UserDefaults.standard.set(newValue, forKey: captureRegionOnReleaseKey) }
     }
 
@@ -283,7 +282,7 @@ enum AppPreferences {
 
     /// Opens BetterShot's selector with the last area already selected. On unless turned off.
     static var preselectPreviousRegion: Bool {
-        get { UserDefaults.standard.object(forKey: preselectPreviousRegionKey) as? Bool ?? true }
+        get { UserDefaults.standard.object(forKey: preselectPreviousRegionKey) as? Bool ?? false }
         set { UserDefaults.standard.set(newValue, forKey: preselectPreviousRegionKey) }
     }
 

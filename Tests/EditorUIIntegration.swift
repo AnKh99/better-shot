@@ -38,6 +38,8 @@ func checkEditorUI(imageURL: URL, movieURL: URL) async throws {
     precondition(shortcuts.defaultRegion.keyCode == UInt32(kVK_ANSI_4))
     precondition(shortcuts.defaultRecording.keyCode == UInt32(kVK_ANSI_2))
     precondition(shortcuts.defaultRecordingOptions.keyCode == UInt32(kVK_ANSI_5))
+    precondition(ShortcutService.Action.recordScreen.defaultShortcut?.keyCode == UInt32(kVK_ANSI_5))
+    precondition(ShortcutService.Action.recordingOptions.defaultShortcut == nil)
     for (oldRegionKey, oldRecordingKey, enabled) in [
         (kVK_ANSI_2, kVK_ANSI_5, true),
         (kVK_ANSI_2, kVK_ANSI_5, false),
@@ -952,9 +954,9 @@ func checkCaptureControlsUI() throws {
     let storedPreselect = defaults.object(forKey: preselectKey)
     defer { defaults.set(storedPreselect, forKey: preselectKey) }
     defaults.removeObject(forKey: preselectKey)
-    precondition(AppPreferences.preselectPreviousRegion, "Unset preferences keep opening with the last area selected")
-    defaults.set(false, forKey: preselectKey)
-    precondition(!AppPreferences.preselectPreviousRegion, "Turning preselection off must persist")
+    precondition(!AppPreferences.preselectPreviousRegion, "Unset preferences open with an empty selection")
+    defaults.set(true, forKey: preselectKey)
+    precondition(AppPreferences.preselectPreviousRegion, "Turning preselection on must persist")
     defaults.removeObject(forKey: preselectKey)
     try checkScrollCaptureStitching()
     let sources = RecordingSourceCatalog.shared

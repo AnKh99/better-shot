@@ -77,7 +77,7 @@ Original captures and source recordings are never modified.
 | Fullscreen screenshot | `⌘⇧3` |
 | Capture previous region | `⌘⇧1` |
 | Capture and recording bar | `⌘⇧2` |
-| Recording options | `⌘⇧5` |
+| Record the screen under the pointer | `⌘⇧5` |
 | OCR text scan | `⌘⇧O` |
 | Color picker | `⌘⇧C` |
 

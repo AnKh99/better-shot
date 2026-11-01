@@ -327,6 +327,7 @@ private final class RecordingBarHostingView: NSHostingView<RecordingBarView> {
 
 private struct RecordingBarView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
     @State private var presenter = RecordingBarPresenter.shared
     @State private var tooltip = BarTooltipModel()
 
@@ -361,10 +362,16 @@ private struct RecordingBarView: View {
         // hides the controls behind the narrowing edge instead of letting
         // them spill past it.
         .clipShape(barShape)
-        .studioGlass(cornerRadius: BarMetrics.cornerRadius, opacity: 0.78)
+        .background {
+            if presenter.mode == .recording {
+                barShape.fill(BarMetrics.recordingFill)
+            }
+        }
+        .studioGlass(cornerRadius: barCornerRadius, opacity: 0.78)
         .overlay {
             barShape.strokeBorder(BarMetrics.edge, lineWidth: 0.5)
         }
+        .environment(\.colorScheme, presenter.mode == .recording ? .dark : colorScheme)
         .coordinateSpace(.named(BarCoordinateSpace.bar))
         .overlay(tooltipLayer)
         // What the hosting view hit-tests against and what satellite windows
@@ -397,7 +404,11 @@ private struct RecordingBarView: View {
         .animation(reduceMotion ? nil : .easeOut(duration: 0.12), value: tooltip.visible?.text)
     }
 
+    private var barCornerRadius: CGFloat {
+        presenter.mode == .recording ? BarMetrics.recordingCornerRadius : BarMetrics.cornerRadius
+    }
+
     private var barShape: RoundedRectangle {
-        RoundedRectangle(cornerRadius: BarMetrics.cornerRadius, style: .continuous)
+        RoundedRectangle(cornerRadius: barCornerRadius, style: .continuous)
     }
 }

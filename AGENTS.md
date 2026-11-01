@@ -64,7 +64,7 @@ a PR unless explicitly requested.
 - Hide scroll indicators in both editors while preserving scrolling. Check narrow
   windows so tools, labels, values, and actions are not clipped or unreachable.
 - Keep one shared capture bar. Reuse `BarMetrics`: capture height 64 pt, recording
-  height 38 pt. The recording row contains Stop/timer, Pause, Restart, and Discard.
+  height 38 pt. The recording row contains the status dot and timer, Mute (with a microphone), Pause, Stop, Restart, and Discard.
 
 ### Interactions and accessibility
 
@@ -94,7 +94,7 @@ a PR unless explicitly requested.
 ## Capture, image quality, and recording
 
 - Shortcut defaults: `⌘⇧4` region screenshot, `⌘⇧3` fullscreen screenshot,
-  `⌘⇧2` shared capture bar, `⌘⇧5` Recording options, `⌘⇧O` OCR, `⌘⇧C` color picker,
+  `⌘⇧2` shared capture bar, `⌘⇧5` starts recording the screen under the pointer, with no setup or countdown, `⌘⇧O` OCR, `⌘⇧C` color picker,
   `⌘⇧1` Capture Previous Region. `⌘⇧2` always opens the capture bar.
   Use `ShortcutService` as the source for UI labels and settings. Migrations must
   preserve customized bindings and disabled states.
@@ -109,9 +109,9 @@ a PR unless explicitly requested.
   as soon as I let go chooses capture on mouse release or adjustment before
   confirmation. Window screenshots use macOS's native window selector. Recording
   areas use the adjustable AppKit selector and system crosshair. By default it
-  opens with the previous area selected, so Return captures it again; Start with
-  the last area selected in Settings > Capture > Region turns that off for every
-  use of the selector without forgetting the area. Its edges resize it,
+  opens empty and captures on release; Start with the last area selected in
+  Settings > Capture > Region preselects the previous area for every use of the
+  selector. Its edges resize it,
   and a drag anywhere, even inside it, draws a new area. OCR keeps macOS's native `screencapture` selector. Do not describe the
   recording selector as Apple's system recording picker.
 - Preserve capture-window exclusion, correct display/coordinate conversion,

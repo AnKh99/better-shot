@@ -2,6 +2,29 @@ import Foundation
 import ScreenCaptureKit
 
 enum RecordingCaptureEntry {
+    /// One press and it's recording: the display under the pointer, with the
+    /// saved audio and camera choices, no setup and no countdown.
+    static func recordScreenUnderPointer() {
+        guard ScreenRecordingManager.ensureScreenCapturePermission() else { return }
+        // Read before the first await, so the display is the one under the
+        // pointer at the moment of the press.
+        let screen = ActiveDisplayResolver.activeScreen(preferPointer: true)
+        let displayID = screen.flatMap(ActiveDisplayResolver.displayID(for:))
+        Task {
+            do {
+                let content = try await ScreenRecordingCapture.availableContent()
+                guard let display = content.displays.first(where: { $0.displayID == displayID }) ?? content.displays.first else {
+                    throw CocoaError(.featureUnsupported)
+                }
+                ScreenRecordingManager.shared.startRecording(source: ScreenRecordingSource(kind: .fullscreen(display)))
+            } catch {
+                ToastWindow.shared.show(isError: true, title: "Couldn’t start recording",
+                    message: "No screen is available to record. Try again.",
+                    systemIcon: "exclamationmark.triangle", on: screen)
+            }
+        }
+    }
+
     static func recordFullscreen(_ display: SCDisplay) {
         Task {
             await CaptureCountdownPresenter.shared.runIfNeeded(

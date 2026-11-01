@@ -176,6 +176,7 @@
 		BCFE4A22239F0F1F256911EC /* AnnotationDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AE3D9E0B57D78980112DD4 /* AnnotationDocument.swift */; };
 		BE1AED402560581F1097F014 /* AnnotationKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885F73431C6FEAD7062AA6FE /* AnnotationKeyboard.swift */; };
 		BE39F4F3DB46B961EF75AD0F /* RecordingVideoCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE2BD0DBF602443E0B82C3F /* RecordingVideoCrop.swift */; };
+		C02C2B0040CBF48ABFA35A37 /* RecordingMicrophoneGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200962DF3C71607C9D9C25FA /* RecordingMicrophoneGate.swift */; };
 		C2CEFFBB19C4C1928969B598 /* AnnotationProgressiveBlurPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E81E9EEFBAF2A3AADB79A9 /* AnnotationProgressiveBlurPreview.swift */; };
 		C46DD6DBAA95F563F2EC6E4E /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E774656DB29A1792294977 /* SettingsWindowController.swift */; };
 		C5691D63FCE00852A86F8824 /* RecordingMotionSpring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D7B4E7C441E328018B7A02 /* RecordingMotionSpring.swift */; };
@@ -260,6 +261,7 @@
 		1A8FF0E5AD713FC1D7E99DE7 /* BetterShotDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterShotDelegate.swift; sourceTree = "<group>"; };
 		1A982D92197DBD85F4E99877 /* Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shape.swift; sourceTree = "<group>"; };
 		1EDA57621906E0853E3239C7 /* TransferStatusCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferStatusCard.swift; sourceTree = "<group>"; };
+		200962DF3C71607C9D9C25FA /* RecordingMicrophoneGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingMicrophoneGate.swift; sourceTree = "<group>"; };
 		21453FFFE9FF2E1860B1BB7E /* ScreenRecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingManager.swift; sourceTree = "<group>"; };
 		218BCF4C3E6DEC3D0AE86959 /* PathBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathBuilder.swift; sourceTree = "<group>"; };
 		23F4D20DF3F0349735C2F80D /* RecordingProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingProject.swift; sourceTree = "<group>"; };
@@ -509,13 +511,6 @@
 			path = Sharing;
 			sourceTree = "<group>";
 		};
-		299E86DC313097FC40D543B7 /* Presets */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Presets;
-			sourceTree = "<group>";
-		};
 		39D4566D88515C653CF4F4DB /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -680,6 +675,7 @@
 				F02562FF53E7AE39E8DE3E81 /* RecordingExportReframe.swift */,
 				2A151485F935146E94D5705F /* RecordingInputAuthorization.swift */,
 				8944EFA56AE64C38C83ED9E1 /* RecordingKeystrokeCapture.swift */,
+				200962DF3C71607C9D9C25FA /* RecordingMicrophoneGate.swift */,
 				62D7B4E7C441E328018B7A02 /* RecordingMotionSpring.swift */,
 				FF44DA79DA0F8C173F4D8299 /* RecordingOverlayEffects.swift */,
 				125F852C8EA0B144BB2364E1 /* RecordingPickerBar.swift */,
@@ -779,7 +775,6 @@
 				49CD1ABB4117999E05DAEA92 /* Capture */,
 				749E9D00F818F70E06F34BB9 /* History */,
 				39D4566D88515C653CF4F4DB /* Models */,
-				299E86DC313097FC40D543B7 /* Presets */,
 				99E8726305BC9AF4B98FA73B /* Preview */,
 				02E0E07267FD5201B631F82C /* Services */,
 				E4007FFA622C92BA5142F86A /* Settings */,
@@ -856,7 +851,6 @@
 				};
 			};
 			buildConfigurationList = FDE4C5BE7F87318CFEAA3DDB /* Build configuration list for PBXProject "BetterShot" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -869,6 +863,7 @@
 				B9709ABD91AC8272F8C2A2BB /* XCRemoteSwiftPackageReference "DockProgress" */,
 			);
 			preferredProjectObjectVersion = 77;
+			productRefGroup = 4B049A4676B9CFEECB1A3DF6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1035,6 +1030,7 @@
 				AECE06FCCA388F3C27CA5C9C /* RecordingExportReframe.swift in Sources */,
 				1BADF7BB6C69016A7C0A3F67 /* RecordingInputAuthorization.swift in Sources */,
 				BC6170740B05997D27830D0B /* RecordingKeystrokeCapture.swift in Sources */,
+				C02C2B0040CBF48ABFA35A37 /* RecordingMicrophoneGate.swift in Sources */,
 				CAD3D607DBDB99077A4FB695 /* RecordingMotion.swift in Sources */,
 				C5691D63FCE00852A86F8824 /* RecordingMotionSpring.swift in Sources */,
 				428051CE7498067FA05216D9 /* RecordingOverlayEffects.swift in Sources */,

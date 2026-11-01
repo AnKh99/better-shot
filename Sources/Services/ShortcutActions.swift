@@ -18,6 +18,10 @@ extension ShortcutService {
             }
         case .recording, .recordingOptions:
             RecordingBarPresenter.shared.showPicker(recordingOptions: action == .recordingOptions)
+        case .recordScreen:
+            guard !manager.isActive else { return }
+            await RecordingBarPresenter.shared.hidePickerForCapture()
+            RecordingCaptureEntry.recordScreenUnderPointer()
         case .recordArea:
             guard !manager.isActive else { return }
             await RecordingBarPresenter.shared.hidePickerForCapture()

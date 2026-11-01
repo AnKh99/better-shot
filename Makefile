@@ -9,6 +9,7 @@ SHELL := /bin/bash -o pipefail
 #   make build        — Debug build
 #   make release      — Release build
 #   make run          — Build and launch (debug)
+#   make run-local    — Same, signed with your own Apple Development certificate
 #   make dmg          — Create unsigned DMG for local testing
 #   make clean        — Remove build artifacts
 #   make lint         — Swift compiler warnings check
@@ -31,7 +32,10 @@ MIN_OS      := $(shell python3 -c "import json; print(json.load(open('version.js
 DMG_NAME     = BetterShot-$(VERSION).dmg
 DMG_DIR      = release
 
-.PHONY: generate build release run dmg clean lint test test-build version ship help
+# The team of the Apple Development certificate in your keychain. Lazy, so only local builds look it up.
+LOCAL_TEAM   = $(shell security find-certificate -c "Apple Development" -p 2>/dev/null | openssl x509 -noout -subject -nameopt multiline | awk '/organizationalUnitName/ {print $$3}')
+
+.PHONY: generate build build-local release run run-local dmg clean lint test test-build version ship help
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -66,6 +70,23 @@ release: generate ## Release build (unsigned)
 	@echo "==> $(APP_RELEASE)"
 
 run: build ## Build and launch (debug)
+	@echo "==> Launching BetterShot..."
+	@pkill -x BetterShot 2>/dev/null || true
+	@sleep 1
+	@open -n "$(abspath $(APP_DEBUG))"
+
+build-local: generate ## Debug build signed with your own Apple Development certificate
+	@echo "==> Building $(SCHEME) (Debug, local signing)..."
+	@xcodebuild -project $(PROJECT) \
+		-scheme $(SCHEME) \
+		-configuration $(CONFIG_DEBUG) \
+		-derivedDataPath $(DERIVED_DIR) \
+		CODE_SIGN_IDENTITY="Apple Development" \
+		DEVELOPMENT_TEAM="$(LOCAL_TEAM)" \
+		build 2>&1 | tail -3
+	@echo "==> $(APP_DEBUG)"
+
+run-local: build-local ## Build with your own certificate, stop the running app, and launch
 	@echo "==> Launching BetterShot..."
 	@pkill -x BetterShot 2>/dev/null || true
 	@sleep 1

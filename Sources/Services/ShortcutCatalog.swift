@@ -53,6 +53,7 @@ extension ShortcutService {
         case ocrSingleLine = 30
         case colorPicker = 5
         case recordingOptions = 7
+        case recordScreen = 45
         case recordArea = 40
         case stopRecording = 41
         case pauseRecording = 42
@@ -137,6 +138,7 @@ extension ShortcutService {
             case .ocrSingleLine: "Capture Text without Line Breaks"
             case .colorPicker: "Pick Color"
             case .recordingOptions: "Recording Options"
+            case .recordScreen: "Record Screen Under Pointer"
             case .recordArea: "Record Area"
             case .stopRecording: "Stop & Save Recording"
             case .pauseRecording: "Pause / Resume Recording"
@@ -204,7 +206,7 @@ extension ShortcutService {
             case .recording, .mediaGallery, .restoreLastCapture, .pinLastCapture, .openImage, .openSettings, .unpinAll, .editClipboard: .general
             case .region, .fullscreen, .window, .previousRegion, .timedRegion, .regionCopy, .regionSave, .regionEdit, .regionPin, .scrollCapture: .screenshots
             case .ocr, .ocrSingleLine, .colorPicker: .ocr
-            case .recordingOptions, .recordArea, .stopRecording, .pauseRecording, .restartRecording, .discardRecording: .recording
+            case .recordingOptions, .recordScreen, .recordArea, .stopRecording, .pauseRecording, .restartRecording, .discardRecording: .recording
             case .togglePreviews, .savePreviews, .closePreviews: .preview
             case .imageBackground, .imageSelect, .imageCrop, .imageRectangle, .imageFilledRectangle, .imageEllipse, .imageLine, .imageArrow, .imageFreehand, .imageCounter, .imageText, .imageHighlight, .imagePixelate, .imageBlur: .imageTools
             case .imageSave, .imageExport, .imageCopy, .imageShare, .imageUndo, .imageRedo, .imageSelectAll, .imageDelete, .imageZoomIn, .imageZoomOut, .imageFit, .imageActualSize, .imageIncreaseSize, .imageDecreaseSize, .imageRotateLeft, .imageRotateRight, .imageFlipHorizontal, .imageFlipVertical: .imageEditing
@@ -228,7 +230,7 @@ extension ShortcutService {
             case .ocr: .defaultOCR
             case .colorPicker: .defaultColorPicker
             case .recording: .defaultRecording
-            case .recordingOptions: .defaultRecordingOptions
+            case .recordScreen: .defaultRecordScreen
             case .imageSelect: Shortcut(keyCode: UInt32(kVK_ANSI_H), modifiers: UInt32(0), enabled: true)
             case .imageCrop: Shortcut(keyCode: UInt32(kVK_ANSI_C), modifiers: UInt32(0), enabled: true)
             case .imageRectangle: Shortcut(keyCode: UInt32(kVK_ANSI_R), modifiers: UInt32(0), enabled: true)
