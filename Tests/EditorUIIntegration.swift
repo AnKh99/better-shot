@@ -661,6 +661,14 @@ private func checkCameraAspectRatios(movieURL: URL) async throws {
     await model.load()
     defer { model.teardown() }
     precondition(model.hasCameraVideo)
+    precondition(!model.zoomEnabled, "New recordings open without automatic zoom")
+    for systemCursor in [false, true] {
+        var options = ScreenRecordingCaptureOptions()
+        options.capturesSystemCursor = systemCursor
+        let configuration = ScreenRecordingCapture.buildConfiguration(
+            width: 64, height: 64, sourceRect: nil, options: options)
+        precondition(configuration.showsCursor == systemCursor, "The system cursor setting reaches ScreenCaptureKit")
+    }
     model.setCameraAspectRatio(.vertical)
     model.undo()
     precondition(model.style.camera.aspectRatio == .square)

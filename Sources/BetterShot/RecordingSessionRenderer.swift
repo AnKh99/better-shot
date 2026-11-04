@@ -70,7 +70,8 @@ enum RecordingSessionRenderer {
         // Selecting a camera means the default delivered recording includes
         // it; a saved Studio project that explicitly hid the bubble wins.
         style.camera.isVisible = session.hasCamera && (document?.style.value.camera.isVisible ?? true)
-        let zoomEnabled = document?.zoomEnabled ?? true
+        // Matches Studio: a recording nobody has edited yet starts without zoom.
+        let zoomEnabled = document?.zoomEnabled ?? false
         let zoomCues = document?.zoomCues
             ?? ZoomCueSynthesizer.cues(from: capture, duration: duration)
         let clipTimeline: RecordingClipTimeline

@@ -89,6 +89,8 @@ private enum ScreenRecordingFinishAction: Equatable {
 /// What gets captured besides screen pixels, resolved from preferences at start.
 nonisolated struct ScreenRecordingCaptureOptions: Sendable {
     var capturesSystemAudio = false
+    /// Records the OS cursor into the pixels instead of drawing a synthetic one in Studio.
+    var capturesSystemCursor = false
     var microphoneDeviceID: String?
     var cameraDeviceID: String?
 
@@ -102,6 +104,7 @@ nonisolated struct ScreenRecordingCaptureOptions: Sendable {
     static func fromPreferences() -> ScreenRecordingCaptureOptions {
         var options = ScreenRecordingCaptureOptions()
         options.capturesSystemAudio = BetterShotPreferences.recordingSystemAudio
+        options.capturesSystemCursor = BetterShotPreferences.recordingSystemCursor
         let micID = BetterShotPreferences.recordingMicrophoneDeviceID
         options.microphoneDeviceID = micID.isEmpty ? nil : micID
         let cameraID = BetterShotPreferences.recordingCameraDeviceID
@@ -275,7 +278,7 @@ final class ScreenRecordingManager {
                 manifest.pixelHeight = target.height
                 manifest.pixelScale = target.pointPixelScale
                 manifest.sourceDisplayID = target.displayID
-                manifest.pointerSynthesized = true
+                manifest.pointerSynthesized = !options.capturesSystemCursor
                 manifest.pressEffectsBaked = false
                 // Press feedback is a Studio-side choice now; the manifest
                 // keeps the field so older builds still render the effects.
@@ -964,10 +967,11 @@ nonisolated final class ScreenRecordingCapture: NSObject, SCStreamOutput, SCStre
         configuration.minimumFrameInterval = CMTime(value: 1, timescale: 60)
         configuration.pixelFormat = kCVPixelFormatType_32BGRA
         configuration.queueDepth = 3
-        // The OS cursor stays out of the pixels; its position is logged to
-        // input.json and Studio/exports draw a synthetic, smoothed pointer
-        // instead (see RecordingPointerTimeline).
-        configuration.showsCursor = false
+        // By default the OS cursor is recorded as macOS draws it. Otherwise it
+        // stays out of the pixels; its position is logged to input.json and
+        // Studio/exports draw a synthetic, smoothed pointer instead (see
+        // RecordingPointerTimeline).
+        configuration.showsCursor = options.capturesSystemCursor
         configuration.capturesAudio = options.capturesSystemAudio
         if options.capturesSystemAudio {
             configuration.excludesCurrentProcessAudio = true

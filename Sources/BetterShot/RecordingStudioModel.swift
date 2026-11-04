@@ -336,9 +336,10 @@ final class RecordingStudioModel {
         } else {
             style = RecordingStudioDefaults.style
             style.camera.isVisible = hasCameraVideo
-            if session == nil {
-                zoomEnabled = false
-            } else {
+            // New recordings start without zoom; the suggested cues are kept
+            // so turning Zoom on in the editor still has them ready.
+            zoomEnabled = false
+            if session != nil {
                 zoomCues = ZoomCueSynthesizer.cues(from: pointerCapture, duration: sourceDuration)
             }
         }

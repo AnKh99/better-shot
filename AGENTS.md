@@ -139,8 +139,11 @@ a PR unless explicitly requested.
   Preserve transparent backgrounds, contrasting outlines, the highest-resolution
   recorded representation, and cached decoding. Do not regenerate cursor PNGs per frame.
 - Keep Recorded/Arrow/Dark/Light/Dot (and legacy Hand), visibility, Natural/Smooth motion, press/ripple,
-  and idle hiding consistent in preview, export, and saved projects. Imported
-  footage with a baked-in cursor cannot be restyled; explain that in the UI.
+  and idle hiding consistent in preview, export, and saved projects. Recordings
+  include the system cursor by default (Settings > Recording > System cursor);
+  turning it off records the pointer separately for restyling. Footage with a
+  baked-in cursor cannot be restyled; explain that in the UI. New recordings
+  open with Zoom off; the suggested cues stay ready if it is turned on.
 - Camera frame ratios are independent of the video canvas ratio. Use
   `RecordingStudioLayout` for preview and export, keep the frame within the canvas,
   and default older projects/presets without a camera ratio to 1:1. Screen/camera

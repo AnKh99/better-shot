@@ -1021,6 +1021,7 @@ struct RecordingSettingsTab: View {
     @AppStorage(BetterShotPreferences.recordingCameraDeviceIDKey) private var cameraID: String = ""
     @AppStorage(BetterShotPreferences.recordingMicrophoneDeviceIDKey) private var microphoneID: String = ""
     @AppStorage(BetterShotPreferences.recordingSystemAudioKey) private var captureAudio: Bool = false
+    @AppStorage(BetterShotPreferences.recordingSystemCursorKey) private var captureSystemCursor: Bool = true
     @AppStorage(AppPreferences.recordingCaptureKeystrokesKey) private var captureKeystrokes: Bool = false
     @AppStorage(BetterShotPreferences.recordingStartDelaySecondsKey) private var startDelaySeconds: Int = 0
     @AppStorage(BetterShotPreferences.recordingTeleprompterEnabledKey) private var teleprompterEnabled: Bool = false
@@ -1078,12 +1079,14 @@ struct RecordingSettingsTab: View {
                 SettingsDivider()
                 SettingToggle("System audio", caption: "The sound your Mac is playing.", isOn: $captureAudio)
                 SettingsDivider()
+                SettingToggle("System cursor", caption: "Records the cursor as you see it. Turn off to restyle it in the editor.", isOn: $captureSystemCursor)
+                SettingsDivider()
                 SettingToggle("Keystrokes", caption: "Shows shortcuts and special keys, never plain typing. Needs Input Monitoring.", isOn: $captureKeystrokes)
                     .onChange(of: captureKeystrokes) { _, isOn in
                         if isOn && !CGPreflightListenEventAccess() { CGRequestListenEventAccess() }
                     }
             } footer: {
-                Text("The recording bar offers the same choices right before you record. The cursor is always saved separately so you can restyle it in the editor.")
+                Text("The recording bar offers the same choices right before you record. A recorded system cursor cannot be restyled or hidden later.")
             }
 
             SettingsGroup("Before Recording") {

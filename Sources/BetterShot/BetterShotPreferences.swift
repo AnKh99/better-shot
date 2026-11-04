@@ -31,6 +31,7 @@ enum BetterShotPreferences {
     static let recordingCameraDeviceIDKey = "recordingCameraDeviceID"
     static let recordingMicrophoneDeviceIDKey = "recordingMicrophoneDeviceID"
     static let recordingSystemAudioKey = "recordingSystemAudio"
+    static let recordingSystemCursorKey = "bs_recordingSystemCursor"
     static let recordingStartDelaySecondsKey = "recordingStartDelaySeconds"
     static let recordingTeleprompterEnabledKey = "recordingTeleprompterEnabled"
     static let recordingTeleprompterScriptKey = "recordingTeleprompterScript"
@@ -86,6 +87,13 @@ enum BetterShotPreferences {
     static var recordingSystemAudio: Bool {
         get { UserDefaults.standard.bool(forKey: recordingSystemAudioKey) }
         set { UserDefaults.standard.set(newValue, forKey: recordingSystemAudioKey) }
+    }
+
+    /// Whether the OS cursor is recorded into the pixels as macOS draws it.
+    /// Defaults to on; off records it separately for restyling in Studio.
+    static var recordingSystemCursor: Bool {
+        get { UserDefaults.standard.object(forKey: recordingSystemCursorKey) as? Bool ?? true }
+        set { UserDefaults.standard.set(newValue, forKey: recordingSystemCursorKey) }
     }
 
     /// Countdown delay (in seconds) before a recording starts. 0 means off.
